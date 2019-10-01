@@ -111,5 +111,12 @@ public class Peças
 		}
 		
 		g.setFont(Fonte);
+		
+		//Coloca os numeros no centro da peça
+		
+		int drawX = WIDTH / 2 - Utilitarios.getRecebeLargura("" + value, Fonte, g) / 2;
+		int drawY = HEIGHT / 2 - Utilitarios.getRecebeAltura("" + value, Fonte, g) / 2;
+		g.drawString("" + value, drawX, drawY);
+		g.dispose();
 	}
 }
