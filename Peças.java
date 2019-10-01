@@ -6,11 +6,11 @@ import java.awt.image.BufferedImage;
 public class Peças 
 {
 	//variaveis para o desenho da peca
-	public static final int WIDTH = 80;
-	public static final int HEIGHT = 80;
+	public static final int X_PECA = 80;
+	public static final int Y_PECA = 80;
 	public static final int SLIDE_SPEED = 20;
-	public static final int ARC_WIDTH = 15; //aumentar para ter um arco maior
-	public static final int ARC_HEIGHT = 15; //aumentar para ter um arco maior
+	public static final int ARC_X_PECA = 15; //aumentar para ter um arco maior
+	public static final int ARC_Y_PECA = 15; //aumentar para ter um arco maior
 	
 	//varaiveis em 'private' pois apenas a classe Peças vai ter acesso
 	private int value;
@@ -26,7 +26,7 @@ public class Peças
 		this.value = value;
 		this.x = x;
 		this.y = y;
-		imagem_Peca = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		imagem_Peca = new BufferedImage(X_PECA, Y_PECA, BufferedImage.TYPE_INT_ARGB);
 		drawImage();
 	}
 	
@@ -96,9 +96,9 @@ public class Peças
 		//}
 		
 		g.setColor(new Color(0,0,0,0)); //passa as cores para transparente
-		g.fillRect(0,0,WIDTH,HEIGHT);
+		g.fillRect(0,0,X_PECA,Y_PECA);
 		g.setColor(background);
-		g.fillRoundRect(0, 0, WIDTH, HEIGHT, ARC_WIDTH, ARC_HEIGHT);
+		g.fillRoundRect(0, 0, X_PECA,Y_PECA, ARC_X_PECA, ARC_Y_PECA);
 		g.setColor(Text);
 		
 		if(value <= 64)
@@ -114,8 +114,8 @@ public class Peças
 		
 		//Coloca os numeros no centro da peça
 		
-		int drawX = WIDTH / 2 - Utilitarios.getRecebeLargura("" + value, Fonte, g) / 2;
-		int drawY = HEIGHT / 2 - Utilitarios.getRecebeAltura("" + value, Fonte, g) / 2;
+		int drawX = X_PECA / 2 - Utilitarios.getRecebeLargura("" + value, Fonte, g) / 2;
+		int drawY = Y_PECA / 2 - Utilitarios.getRecebeAltura("" + value, Fonte, g) / 2;
 		g.drawString("" + value, drawX, drawY);
 		g.dispose();
 	}
