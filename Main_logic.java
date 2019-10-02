@@ -1,12 +1,10 @@
-package main_logic;
-import java.awt.Window;
+//package Main_logic;
+//import java.awt.Window;
 import javax.swing.JFrame;
 
-
-public class Main_logic {
-
- 	
-	public void main(String[] args)
+public class Main_logic 
+{ 
+	public static void main(String[] args)
 	{
 		Jogo jogo = new Jogo();
 		
@@ -18,9 +16,6 @@ public class Main_logic {
 		janela.setLocationRelativeTo(null);
 		janela.setVisible(true);
 		
-		jogo.inicializar();
+		jogo.start();
 	}
-    
 }
-
-
