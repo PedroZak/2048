@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-//classe utilizada para centralizar o numero dentro da peça de acordo com o numero 
+//classe utilizada para centralizar o numero dentro da peï¿½a de acordo com o numero 
 
 public class Utilitarios 
 {

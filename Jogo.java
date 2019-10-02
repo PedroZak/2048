@@ -17,6 +17,7 @@ public class Jogo extends JPanel implements KeyListener, Runnable
 	private Thread jogo;
 	private boolean rodando;
 	private BufferedImage imagem = new BufferedImage (X_TELA, Y_TELA, BufferedImage.TYPE_INT_RGB);
+	private Tabuleiro tabuleiro;
 	
 	private long startTime;
     private long elapsed;
@@ -27,11 +28,14 @@ public class Jogo extends JPanel implements KeyListener, Runnable
         setFocusable(true);
         setPreferredSize(new Dimension(X_TELA, Y_TELA));
         addKeyListener(this);
+        
+        tabuleiro = new Tabuleiro(X_TELA/2 - Tabuleiro.colunas/2, HEIGHT - Tabuleiro.linhas - 10);
     }
     
     private void update()
     {
-        
+        tabuleiro.update();
+        Teclado.atualizacao();
     }
         
     private void render()
@@ -39,7 +43,7 @@ public class Jogo extends JPanel implements KeyListener, Runnable
     	Graphics2D g=(Graphics2D) imagem.getGraphics();
     	g.setColor(Color.white);
     	g.fillRect(0,0,X_TELA,Y_TELA);
-        //
+        tabuleiro.render(g);
         g.dispose();
             
         Graphics2D g2d = (Graphics2D) getGraphics();
@@ -119,20 +123,21 @@ public class Jogo extends JPanel implements KeyListener, Runnable
 		System.exit(0);
 	}
         
-	@Override
-	public void keyTyped(KeyEvent e) 
-	{
-		
-	}
-
+	//Funcoes a baixo sao chamadas quando um botao é pressionado
 	@Override
 	public void keyPressed(KeyEvent e) 
 	{
-		
+		Teclado.botaoPressionado(e);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) 
+	{
+		Teclado.botaoLiberado(e);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) 
 	{
 		
 	}

@@ -48,7 +48,7 @@ public class Teclado {
 	
 	public static boolean escolha(int keyEvent)
 	{
-		return !pressionado[keyEvent] && anterior[keyEvent];
+		return !pressionado[keyEvent]&&anterior[keyEvent];
 	}	
 }
 
