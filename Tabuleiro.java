@@ -10,7 +10,7 @@ public class Tabuleiro {
    public static final int colunas =4;
    
    private final int pecasIniciais = 2;
-   private Peças[][] tab;
+   private PeÃ§as[][] tab;
     private boolean morto;
     private boolean ganhar;
     private BufferedImage tabuleiro;
@@ -19,8 +19,8 @@ public class Tabuleiro {
     private int y;
     
     private static int ESPACO =10; // espaco etre pecas
-    private static int TAB_X_TELA= (colunas+1)* ESPACO + colunas * Peças.X_PECA;
-    private static int TAB_Y_TELA= (linhas+1)* ESPACO + linhas * Peças.Y_PECA;
+    private static int TAB_X_TELA= (colunas+1)* ESPACO + colunas * PeÃ§as.X_PECA;
+    private static int TAB_Y_TELA= (linhas+1)* ESPACO + linhas * PeÃ§as.Y_PECA;
     
     private boolean hasStarted;
     
@@ -28,7 +28,7 @@ public class Tabuleiro {
     {
         this.x = x;
         this.y = y;
-        tab = new Peças[linhas][colunas];
+        tab = new PeÃ§as[linhas][colunas];
         tabuleiro = new BufferedImage(TAB_X_TELA,TAB_Y_TELA, BufferedImage.TYPE_INT_BGR);
         tabuleiroF = new BufferedImage(TAB_X_TELA,TAB_Y_TELA, BufferedImage.TYPE_INT_BGR);
          
@@ -43,9 +43,9 @@ public class Tabuleiro {
         
         for(int lin = 0; lin < linhas;lin++ ){
             for(int col= 0;col<colunas;col++){
-                int x = ESPACO+ ESPACO*col + Peças.X_PECA*col;
-                int y = ESPACO+ ESPACO*lin + Peças.Y_PECA*lin;
-                g.fillRoundRect(x,y,Peças.X_PECA,Peças.Y_PECA, Peças.ARC_X_PECA,Peças.ARC_Y_PECA);
+                int x = ESPACO+ ESPACO*col + PeÃ§as.X_PECA*col;
+                int y = ESPACO+ ESPACO*lin + PeÃ§as.Y_PECA*lin;
+                g.fillRoundRect(x,y,PeÃ§as.X_PECA,PeÃ§as.Y_PECA, PeÃ§as.ARC_X_PECA,PeÃ§as.ARC_Y_PECA);
                 
             }
         }
