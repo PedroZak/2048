@@ -1,7 +1,14 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 
@@ -18,6 +25,9 @@ public class Tabuleiro
    private BufferedImage tabuleiroF;
    private int x;
    private int y;
+   private int pontuacao = 0;
+   private int maiorPontuacao = 0;
+   private Font fontePontuacao;
     
    private static int ESPACO =10; // espaco etre pecas
    public static int TAB_X_TELA= (colunas + 1) * ESPACO + colunas * Pecas.X_PECA;
@@ -27,14 +37,87 @@ public class Tabuleiro
     
    public Tabuleiro(int x, int y)
    {
+	   try 
+	   {
+		   salvarCaminho = Tabuleiro.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
+	   
+	   fontePontuacao = Jogo.texto.deriveFont(24f);
 	   this.x = x;
 	   this.y = y;
 	   tab = new Pecas[linhas][colunas];
 	   tabuleiro = new BufferedImage(TAB_X_TELA,TAB_Y_TELA, BufferedImage.TYPE_INT_RGB);
 	   tabuleiroF = new BufferedImage(TAB_X_TELA,TAB_Y_TELA, BufferedImage.TYPE_INT_RGB);
-         
+	   loadHighScore();
 	   createBoardImage();
 	   start();
+   }
+   
+   //Salvar informacoes
+   private String salvarCaminho;
+   private String arquivo = "ArquivosSalvos";
+    
+   
+   private void createSaveData()
+   {
+	   try
+	   {
+		   File file = new File(salvarCaminho, arquivo);
+		   
+		   FileWriter output = new FileWriter(file);
+		   BufferedWriter writer = new BufferedWriter(output);
+		   writer.write("" + 0);
+		   writer.close();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
+   }
+   
+   private void loadHighScore()
+   {
+	   try
+	   {
+		   File f = new File(salvarCaminho, arquivo);
+		   
+		   if(!f.isFile())
+		   {
+			   createSaveData();
+		   }
+		   
+		   BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+		   maiorPontuacao = Integer.parseInt(reader.readLine());
+		   reader.close();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
+   }
+   
+   private void setHighScore()
+   {
+	   FileWriter output = null;
+	   
+	   try
+	   {
+		   File f = new File(salvarCaminho, arquivo);
+		   output = new FileWriter(f);
+		   BufferedWriter writer = new BufferedWriter(output);
+		   
+		   writer.write("" + pontuacao);
+		   
+		   writer.close();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
    }
     
    private void createBoardImage()  //desenhar o fundo da tela
@@ -127,11 +210,20 @@ public class Tabuleiro
         
         g.drawImage(tabuleiroF, x, y, null);
         g2d.dispose();
+        g.setColor(Color.lightGray);
+        g.setFont(fontePontuacao);
+        g.drawString("" + pontuacao, 30, 40);
+        g.setColor(Color.red);
+        g.drawString("Recorde: " + maiorPontuacao, Jogo.X_TELA - Utilitarios.getRecebeLargura("Recorde: ", fontePontuacao, g) - 60, 40);
     }
     
     public void update()
     {
         checkKeys();
+        if(pontuacao >= maiorPontuacao)
+        {
+        	maiorPontuacao = pontuacao;
+        }
         
         for(int lin = 0; lin < linhas; lin++)
         {
@@ -217,7 +309,7 @@ public class Tabuleiro
     		tab[novaLinha-direcaoVertical][novaColuna-direcaoHorizontal] = null;
     		tab[novaLinha][novaColuna].setMoverPara(new Pontos(novaLinha,novaColuna));
     		tab[novaLinha][novaColuna].setCombinarAnimacao(true);
-    		//add to score
+    		pontuacao += tab[novaLinha][novaColuna].getValue();
     	}
     	else {
     		mover=false;
@@ -342,7 +434,7 @@ public class Tabuleiro
 			}
 		}
 		morto=true;
-		// highscore
+		setHighScore();
 	}
 	
 	private boolean pecasVizinhas(int lin, int col, Pecas atual) {
