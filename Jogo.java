@@ -123,7 +123,7 @@ public class Jogo extends JPanel implements KeyListener, Runnable
 		System.exit(0);
 	}
         
-	//Funcoes a baixo sao chamadas quando um botao é pressionado
+	//Funcoes a baixo sao chamadas quando um botao È pressionado
 	@Override
 	public void keyPressed(KeyEvent e) 
 	{
