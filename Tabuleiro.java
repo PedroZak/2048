@@ -1,7 +1,14 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 
@@ -18,23 +25,99 @@ public class Tabuleiro
    private BufferedImage tabuleiroF;
    private int x;
    private int y;
+   private int pontuacao = 0;
+   private int maiorPontuacao = 0;
+   private Font fontePontuacao;
     
    private static int ESPACO =10; // espaco etre pecas
    public static int TAB_X_TELA= (colunas + 1) * ESPACO + colunas * Pecas.X_PECA;
    public static int TAB_Y_TELA= (linhas + 1) * ESPACO + linhas * Pecas.Y_PECA;
     
    private boolean hasStarted;
+   
+   //Salvar informacoes
+   private String salvarCaminho;
+   private String arquivo = "ArquivosSalvos";
     
    public Tabuleiro(int x, int y)
    {
+	   try 
+	   {
+		   salvarCaminho = Tabuleiro.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
+	   
+	   fontePontuacao = Jogo.texto.deriveFont(24f);
 	   this.x = x;
 	   this.y = y;
 	   tab = new Pecas[linhas][colunas];
 	   tabuleiro = new BufferedImage(TAB_X_TELA,TAB_Y_TELA, BufferedImage.TYPE_INT_RGB);
 	   tabuleiroF = new BufferedImage(TAB_X_TELA,TAB_Y_TELA, BufferedImage.TYPE_INT_RGB);
-         
+        
+	   loadHighScore();
 	   createBoardImage();
 	   start();
+   }
+   
+   private void createSaveData()
+   {
+	   try
+	   {
+		   File file = new File(salvarCaminho, arquivo);
+		   
+		   FileWriter output = new FileWriter(file);
+		   BufferedWriter writer = new BufferedWriter(output);
+		   writer.write("" + 0);
+		   writer.close();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
+   }
+   
+   private void loadHighScore()
+   {
+	   try
+	   {
+		   File f = new File(salvarCaminho, arquivo);
+		   
+		   if(!f.isFile())
+		   {
+			   createSaveData();
+		   }
+		   
+		   BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+		   maiorPontuacao = Integer.parseInt(reader.readLine());
+		   reader.close();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
+   }
+   
+   private void setHighScore()
+   {
+	   FileWriter output = null;
+	   
+	   try
+	   {
+		   File f = new File(salvarCaminho, arquivo);
+		   output = new FileWriter(f);
+		   BufferedWriter writer = new BufferedWriter(output);
+		   
+		   writer.write("" + pontuacao);
+		   
+		   writer.close();
+	   }
+	   catch(Exception e)
+	   {
+		   e.printStackTrace();
+	   }
    }
     
    private void createBoardImage()  //desenhar o fundo da tela
@@ -51,7 +134,6 @@ public class Tabuleiro
     		   int x = ESPACO + ESPACO * col + Pecas.X_PECA * col;
     		   int y = ESPACO + ESPACO * lin + Pecas.Y_PECA * lin;
     		   g.fillRoundRect(x,y,Pecas.X_PECA,Pecas.Y_PECA, Pecas.ARC_X_PECA,Pecas.ARC_Y_PECA);
-                
     	   }
        }
    }
@@ -62,15 +144,7 @@ public class Tabuleiro
 	   {
 		   spawnRandom();
 	   }
-	 //  spawn(0,0,2);
-	 //  spawn(0,1,2);
-	 //  spawn(0,2,2);
-	 //  spawn(0,3,2);
-//   }
-//   private void spawn(int lin, int col, int value)
-//   {
-//	   tab[lin][col]=new Pecas(value, getTileX(col),getTileY(lin));
-  }
+   }
    
    private void spawnRandom()
    {
@@ -127,11 +201,21 @@ public class Tabuleiro
         
         g.drawImage(tabuleiroF, x, y, null);
         g2d.dispose();
+        g.setColor(Color.lightGray);
+        g.setFont(fontePontuacao);
+        g.drawString("" + pontuacao, 30, 40);
+        g.setColor(Color.red);
+        g.drawString("Recorde: " + maiorPontuacao, Jogo.X_TELA - Utilitarios.getRecebeLargura("Recorde: ", fontePontuacao, g) - 20, 40);
     }
     
     public void update()
     {
         checkKeys();
+        
+        if(pontuacao >= maiorPontuacao)
+        {
+        	maiorPontuacao = pontuacao;
+        }
         
         for(int lin = 0; lin < linhas; lin++)
         {
@@ -143,7 +227,7 @@ public class Tabuleiro
         			continue;
         		}
         		atual.update();
-        		resetarPosicao(atual,lin, col);
+        		//reset
         		if(atual.getValue() == 2048)
         		{
         			ganhou = true;
@@ -197,7 +281,9 @@ public class Tabuleiro
     boolean mover = true;
     int novaColuna = col;
     int novaLinha = lin;
-    while(mover) {
+    
+    while(mover) 
+    {
     	novaColuna +=direcaoHorizontal; 
     	novaLinha += direcaoVertical;
     	if(verificaLimites(dir,novaLinha,novaColuna ))break;
@@ -217,26 +303,31 @@ public class Tabuleiro
     		tab[novaLinha-direcaoVertical][novaColuna-direcaoHorizontal] = null;
     		tab[novaLinha][novaColuna].setMoverPara(new Pontos(novaLinha,novaColuna));
     		tab[novaLinha][novaColuna].setCombinarAnimacao(true);
-    		//add to score
+    		pontuacao += tab[novaLinha][novaColuna].getValue();
     	}
-    	else {
+    	else 
+    	{
     		mover=false;
     	}
-    	
     }
     return podeMover;
     }
-    private boolean verificaLimites(Direcao dir, int lin, int col) {
-	if(dir==Direcao.ESQ) {
+    private boolean verificaLimites(Direcao dir, int lin, int col) 
+    {
+	if(dir==Direcao.ESQ) 
+	{
 		return col < 0;
 	}
-	else if(dir==Direcao.DIR) {
+	else if(dir==Direcao.DIR) 
+	{
 		return col > colunas - 1;
 	}
-	if(dir==Direcao.CIMA) {
+	if(dir==Direcao.CIMA) 
+	{
 		return lin < 0;
 	}
-	if(dir==Direcao.BAIXO) {
+	if(dir==Direcao.BAIXO) 
+	{
 		return lin > linhas - 1;
 	}
     return false;
@@ -341,8 +432,8 @@ public class Tabuleiro
 				}
 			}
 		}
-		morto=true;
-		// highscore
+		morto = true;
+		setHighScore();
 	}
 	
 	private boolean pecasVizinhas(int lin, int col, Pecas atual) {
@@ -366,11 +457,10 @@ public class Tabuleiro
 			if(checar == null) return true;
 			if(atual.getValue()==checar.getValue()) return true;
 		}
-		return false;
-			
+		return false;	
 	}
     
-    public void checkKeys()
+	public void checkKeys()
     {
         if(Teclado.escolha(KeyEvent.VK_LEFT))
         {
