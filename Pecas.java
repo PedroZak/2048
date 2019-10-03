@@ -229,5 +229,6 @@ public class Pecas
 
 	public void setY(int y) {
 		this.y = y;
-	}	
+	}
+	
 }
