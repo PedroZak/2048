@@ -29,7 +29,7 @@ public class Jogo extends JPanel implements KeyListener, Runnable
         setPreferredSize(new Dimension(X_TELA, Y_TELA));
         addKeyListener(this);
         
-        tabuleiro = new Tabuleiro(X_TELA/2 - Tabuleiro.colunas/2, HEIGHT - Tabuleiro.linhas - 10);
+        tabuleiro = new Tabuleiro(X_TELA/2 - Tabuleiro.TAB_X_TELA/2, Y_TELA - Tabuleiro.TAB_Y_TELA - 10);
     }
     
     private void update()
@@ -123,7 +123,7 @@ public class Jogo extends JPanel implements KeyListener, Runnable
 		System.exit(0);
 	}
         
-	//Funcoes a baixo sao chamadas quando um botao é pressionado
+	//Funcoes a baixo sao chamadas quando um botao È pressionado
 	@Override
 	public void keyPressed(KeyEvent e) 
 	{

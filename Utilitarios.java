@@ -1,9 +1,10 @@
+  
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-//classe utilizada para centralizar o numero dentro da pe�a de acordo com o numero 
+//classe utilizada para centralizar o numero dentro da peca de acordo com o numero 
 
 public class Utilitarios 
 {

@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Pecas 
@@ -12,21 +14,41 @@ public class Pecas
 	public static final int ARC_X_PECA = 15; //aumentar para ter um arco maior
 	public static final int ARC_Y_PECA = 15; //aumentar para ter um arco maior
 	
-	//varaiveis em 'private' pois apenas a classe Pe�as vai ter acesso
+	//varaiveis em 'private' pois apenas a classe Pecas vai ter acesso
 	private int value;
 	private BufferedImage imagem_Peca;
 	private Color background;
 	private Font Fonte;
 	private Color Text;
+	private Pontos moverPara;
 	private int x;
 	private int y;
+	private boolean animacaoInicial=true;
+	private double scaleFirst = 0.1;
+	private BufferedImage imagemInicial;
+	private boolean combinarAnimacao;
+	private double scaleCombine = 1.2;
+	private BufferedImage combinarImagem;
+	public boolean isCombinarAnimacao() {
+		return combinarAnimacao;
+	}
+
+	public void setCombinarAnimacao(boolean combinarAnimacao) {
+		this.combinarAnimacao = combinarAnimacao;
+		if(combinarAnimacao)scaleCombine=1.3;
+	}
+
+	private boolean podeCombinar = true;
 	
 	public Pecas(int value, int x, int y)
 	{
 		this.value = value;
 		this.x = x;
 		this.y = y;
+		moverPara=new Pontos(x,y);
 		imagem_Peca = new BufferedImage(X_PECA, Y_PECA, BufferedImage.TYPE_INT_ARGB);
+		imagemInicial = new BufferedImage(X_PECA, Y_PECA, BufferedImage.TYPE_INT_ARGB);
+		combinarImagem = new BufferedImage(X_PECA*2, Y_PECA*2, BufferedImage.TYPE_INT_ARGB);
 		drawImage();
 	}
 	
@@ -112,11 +134,101 @@ public class Pecas
 		
 		g.setFont(Fonte);
 		
-		//Coloca os numeros no centro da pe�a
+		//Coloca os numeros no centro da peca
 		
 		int drawX = X_PECA / 2 - Utilitarios.getRecebeLargura("" + value, Fonte, g) / 2;
 		int drawY = Y_PECA / 2 - Utilitarios.getRecebeAltura("" + value, Fonte, g) / 2;
 		g.drawString("" + value, drawX, drawY);
 		g.dispose();
 	}
+	
+	public void update()
+	{ 
+		if(animacaoInicial) {
+			AffineTransform transform = new AffineTransform();
+			transform.translate(X_PECA/2 - scaleFirst*X_PECA/2, Y_PECA - scaleFirst*Y_PECA/2);
+			transform.scale(scaleFirst,scaleFirst);
+			Graphics2D g2d = (Graphics2D)imagemInicial.getGraphics();
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g2d.setColor(new Color(0,0,0,0));
+			g2d.fillRect(0,0,X_PECA,Y_PECA);
+			g2d.drawImage(imagem_Peca, transform, null);
+			scaleFirst+=0.1;
+			g2d.dispose();
+			if(scaleFirst>=1)animacaoInicial=false;
+		}
+		else if(combinarAnimacao) {
+			AffineTransform transform = new AffineTransform();
+			transform.translate(X_PECA/2 - scaleCombine*X_PECA/2, Y_PECA - scaleCombine*Y_PECA/2);
+			transform.scale(scaleCombine,scaleCombine);
+			Graphics2D g2d = (Graphics2D)combinarImagem.getGraphics();
+			g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g2d.setColor(new Color(0,0,0,0));
+			g2d.fillRect(0,0,X_PECA,Y_PECA);
+			g2d.drawImage(imagem_Peca, transform, null);
+			scaleCombine-=0.05;
+			g2d.dispose();
+			if(scaleCombine<=1)combinarAnimacao=false;
+	  }
+	}
+	
+	public void render(Graphics2D g)
+	{
+		if(animacaoInicial)
+		{
+			g.drawImage(imagemInicial,x, y, null);	
+		}
+		else if(combinarAnimacao)
+		{
+			g.drawImage(combinarImagem,(int)(x+X_PECA/2-scaleCombine*X_PECA/2), (int)(y+Y_PECA/2-scaleCombine*Y_PECA/2), null);	
+		}
+		else {
+			g.drawImage(imagem_Peca,x, y, null);
+		}
+		}
+			
+	
+	
+	public int getValue()
+	{
+		return value;
+	}
+	public void setValue(int value)
+	{
+		this.value = value;
+		drawImage();
+	}
+
+	public boolean podeCombinar() {
+		return podeCombinar;
+	}
+
+	public void setPodeCombinar(boolean podeCombinar) {
+		this.podeCombinar = podeCombinar;
+	}
+
+	public Pontos getMoverPara() {
+		return moverPara;
+	}
+
+	public void setMoverPara(Pontos moverPara) {
+		this.moverPara = moverPara;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+	
 }

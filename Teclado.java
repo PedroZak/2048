@@ -51,5 +51,3 @@ public class Teclado {
 		return !pressionado[keyEvent]&&anterior[keyEvent];
 	}	
 }
-
-
