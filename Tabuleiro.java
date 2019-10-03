@@ -212,7 +212,7 @@ public class Tabuleiro
     {
         checkKeys();
         
-        if(pontuacao > maiorPontuacao)
+        if(pontuacao >= maiorPontuacao)
         {
         	maiorPontuacao = pontuacao;
         }
